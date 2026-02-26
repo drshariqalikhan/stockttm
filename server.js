@@ -1,27 +1,11 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import rawPkg from 'yahoo-finance2';
 
-// --- THE ULTIMATE ESM UNWRAPPER ---
-// This dynamically digs through the imported package to find the real library,
-// completely bypassing Node.js import wrapper inconsistencies.
-let yahooFinance;
-if (rawPkg && typeof rawPkg.historical === 'function') {
-    yahooFinance = rawPkg;
-} else if (rawPkg && rawPkg.default && typeof rawPkg.default.historical === 'function') {
-    yahooFinance = rawPkg.default;
-} else if (rawPkg && rawPkg.default && rawPkg.default.default && typeof rawPkg.default.default.historical === 'function') {
-    yahooFinance = rawPkg.default.default;
-} else {
-    // If it STILL fails, this will print the exact structure to your Render logs so we can see it
-    const keys = Object.keys(rawPkg).join(', ');
-    const defKeys = rawPkg.default ? Object.keys(rawPkg.default).join(', ') : 'none';
-    console.error(`Unwrap failed. Pkg keys: [${keys}] | Default keys: [${defKeys}]`);
-    throw new Error("Failed to unwrap yahoo-finance2. Check server logs.");
-}
+// --- THE FIX: V3 Class Instantiation ---
+import YahooFinance from 'yahoo-finance2';
+const yahooFinance = new YahooFinance();
 
-// In ES Modules, we have to define __dirname manually
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
