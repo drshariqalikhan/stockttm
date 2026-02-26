@@ -1,7 +1,10 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import yahooFinance from 'yahoo-finance2';
+import yahooFinanceRaw from 'yahoo-finance2';
+
+// --- THE FIX: Safely unwrap the default export ---
+const yahooFinance = yahooFinanceRaw.default || yahooFinanceRaw;
 
 // In ES Modules, we have to define __dirname manually
 const __filename = fileURLToPath(import.meta.url);
@@ -101,7 +104,7 @@ app.get('/api/data', async (req, res) => {
     }
 });
 
-// Start the server
+// Start the server here
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
