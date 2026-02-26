@@ -1,6 +1,11 @@
-const express = require('express');
-const path = require('path');
-const yahooFinance = require('yahoo-finance2').default;
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import yahooFinance from 'yahoo-finance2';
+
+// In ES Modules, we have to define __dirname manually
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
