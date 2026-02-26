@@ -1,12 +1,10 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import yahooFinanceRaw from 'yahoo-finance2';
 
-// --- THE FIX: Safely unwrap the default export ---
-const yahooFinance = yahooFinanceRaw.default || yahooFinanceRaw;
+// --- THE FIX: Use standard native ESM import ---
+import yahooFinance from 'yahoo-finance2'; 
 
-// In ES Modules, we have to define __dirname manually
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -104,7 +102,7 @@ app.get('/api/data', async (req, res) => {
     }
 });
 
-// Start the server here
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
