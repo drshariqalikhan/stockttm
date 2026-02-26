@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// --- THE FIX: V3 Class Instantiation ---
+// Instantiate YahooFinance V3
 import YahooFinance from 'yahoo-finance2';
 const yahooFinance = new YahooFinance();
 
@@ -23,23 +23,31 @@ app.get('/api/data', async (req, res) => {
         // 1. Fetch 10 Years of Historical Weekly Prices
         const tenYearsAgo = new Date();
         tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 10);
+        const today = new Date();
         
-        const hist = await yahooFinance.historical(ticker, {
+        // --- THE FIX: Use the new chart() API and explicitly provide period2 (end date) ---
+        const chartResult = await yahooFinance.chart(ticker, {
             period1: tenYearsAgo,
+            period2: today,
             interval: '1wk'
         });
+
+        // The chart API returns data inside a 'quotes' array
+        const hist = chartResult.quotes;
 
         if (!hist || hist.length === 0) {
             return res.status(404).json({ error: "No price data found for this ticker." });
         }
 
-        const priceData = hist.map(row => ({
-            time: row.date.toISOString().split('T')[0],
-            open: row.open,
-            high: row.high,
-            low: row.low,
-            close: row.close
-        }));
+        const priceData = hist
+            .filter(row => row.close !== null) // Safety check: ignore weeks with missing data
+            .map(row => ({
+                time: new Date(row.date).toISOString().split('T')[0],
+                open: row.open,
+                high: row.high,
+                low: row.low,
+                close: row.close
+            }));
 
         // 2. Fetch Quarterly Earnings to calculate TTM P/E
         let peData =[];
