@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TrendSpider Clone - TTM P/E</title>
+    <title>TrendSpider Clone - Node.js Backend</title>
     
     <!-- Lightweight Charts (TradingView) -->
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
@@ -143,7 +143,6 @@
         }
         syncCharts(priceChart, peChart);
 
-        // Resize observer
         window.addEventListener('resize', () => {
             priceChart.resize(document.getElementById('price-chart').clientWidth, document.getElementById('price-chart').clientHeight);
             peChart.resize(document.getElementById('pe-chart').clientWidth, document.getElementById('pe-chart').clientHeight);
@@ -159,8 +158,7 @@
             status.style.color = "#d1d4dc";
 
             try {
-                // Notice the relative URL path below.
-                // It automatically routes to the Flask backend running on the same domain.
+                // Fetch relative URL (handled by our Node Express server)
                 const backendUrl = `/api/data?ticker=${ticker}`; 
                 
                 const response = await fetch(backendUrl);
